@@ -1,65 +1,95 @@
-import Image from "next/image";
+'use client';
+import dynamic from 'next/dynamic';
+import { motion } from 'framer-motion';
+import FeaturesGrid from "@/components/FeaturesGrid";
+import Marquee from "@/components/Marquee";
+
+// Loading the 3D Model dynamically (Best for performance)
+// تحميل الكوب بشكل منفصل عشان الصفحة تفتح بسرعة
+const CupScene = dynamic(() => import('@/components/CupScene'), {
+  ssr: false, 
+  loading: () => <div className="w-full h-full flex items-center justify-center text-gray-800 font-mono text-xs">LOADING 3D...</div>
+});
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      {/* --- Hero Section --- */}
+      <section className="relative min-h-[90vh] w-full flex flex-col md:flex-row items-center overflow-hidden">
+        
+        {/* Left: Text Content */}
+        <div className="w-full md:w-1/2 p-6 md:pl-20 z-30 order-2 md:order-1 flex flex-col justify-center h-full">
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+             <div className="inline-flex items-center gap-2 mb-6 border border-green-900/50 bg-green-900/10 px-3 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                <span className="text-[10px] font-mono text-green-400 tracking-widest">SYSTEM ONLINE v2.0</span>
+             </div>
+             
+             <h1 className="font-oswald text-5xl md:text-8xl font-bold leading-none mb-6">
+               PRECISION <br/> 
+               <span className="stroke-text opacity-50" style={{WebkitTextStroke: '1px white'}}>PAPER CUPS</span>
+             </h1>
+             
+             <p className="text-gray-400 max-w-md text-sm leading-relaxed mb-8 border-l-2 border-white/20 pl-4">
+               تكنولوجيا تصنيع ألمانية بأيادٍ مصرية. 
+               نقدم أعلى معايير الجودة في الطباعة والتصنيع لتعزيز علامتك التجارية.
+             </p>
+
+             <div className="flex gap-4">
+                <button className="bg-white text-black px-8 py-3 font-oswald font-bold text-sm tracking-wider hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                START PROJECT
+            </button>
+               <button className="border border-white/20 px-8 py-3 font-oswald font-bold text-sm tracking-wider hover:bg-white hover:text-black transition-colors">
+                 VIEW CATALOG
+               </button>
+             </div>
+          </motion.div>
         </div>
-      </main>
-    </div>
+
+        {/* Right: 3D Scene */}
+        <div className="w-full md:w-1/2 h-[50vh] md:h-[90vh] relative z-20 order-1 md:order-2">
+           <div className="w-full h-full cursor-grab active:cursor-grabbing">
+             <CupScene />
+           </div>
+           
+           {/* Floating Specs Card */}
+           <motion.div 
+             initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1 }}
+             className="absolute top-1/3 right-8 hidden md:block bg-black/60 backdrop-blur-md p-4 border border-white/10 rounded-lg w-48"
+           >
+              <div className="flex justify-between text-xs font-mono text-gray-500 mb-2">
+                <span>SPECS</span>
+                <span>ISO 9001</span>
+              </div>
+              <div className="space-y-2 border-t border-white/10 pt-2 text-xs font-mono">
+                 <div className="flex justify-between"><span>HEIGHT</span><span className="text-white">130 MM</span></div>
+                 <div className="flex justify-between"><span>TOP</span><span className="text-white">89 MM</span></div>
+              </div>
+           </motion.div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        >
+          <span className="text-[10px] font-mono tracking-[0.3em] text-gray-500">SCROLL</span>
+          <div className="w-px h-8 bg-gradient-to-b from-white to-transparent"></div>
+        </motion.div>
+
+      </section>
+
+      {/* --- Marquee Strip --- */}
+      <div className="relative z-20 bg-black/50 backdrop-blur-sm border-t border-white/5">
+         <Marquee />
+      </div>
+
+      {/* --- Features Grid --- */}
+      <FeaturesGrid />
+    </>
   );
 }
