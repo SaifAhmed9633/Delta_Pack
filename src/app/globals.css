@@ -16,6 +16,6 @@ body {
 
 /* كلاس مخصص للنصوص المفرغة (Outline Text) */
 .stroke-text {
-  -webkit-text-fill-color: transparent;
-  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke: 1px white;
+  color: transparent;
 }
