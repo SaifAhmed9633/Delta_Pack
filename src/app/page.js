@@ -125,6 +125,8 @@ export default function Home() {
 
       {/* 4. Models Section (جدول المنتجات) - جديد */}
       <ModelsSection />
+
+      
     </>
   );
 }

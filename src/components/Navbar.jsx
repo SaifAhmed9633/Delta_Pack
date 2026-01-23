@@ -2,10 +2,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const navLinks = [
   { name: 'HOME', href: '/' },
-  { name: 'MODELS', href: '#models' },
+  { name: 'MODELS', href: 'models' },
   { name: 'TECHNOLOGY', href: '#features' }, // ربطناها بقسم المميزات
   { name: 'CONTACT', href: '#contact' },
 ];
@@ -13,6 +14,13 @@ const navLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const pathname = usePathname();
+
+  // Hide Navbar on Admin Pages
+  if (pathname && pathname.startsWith('/admin')) {
+    return null;
+  }
 
   // تغيير لون النافبار عند السكرول
   useEffect(() => {
