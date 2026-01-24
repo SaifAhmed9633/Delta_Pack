@@ -14,9 +14,9 @@ export const metadata = {
 
 export default function AdminLayout({ children }) {
     return (
-        <div className="flex min-h-screen bg-[#0a0a0a]">
+        <div className="min-h-screen bg-[#0a0a0a] lg:flex">
             <AdminSidebar />
-            <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto h-screen">
+            <main className="flex-1 min-h-screen">
                 {children}
             </main>
         </div>
