@@ -3,40 +3,48 @@
     "short_name": "DeltaPack",
     "description": "Admin Dashboard for Delta Pack Paper Cup Manufacturing",
     "start_url": "/admin",
-    "scope": "/admin",
+    "scope": "/",
+    "id": "/admin",
     "display": "standalone",
     "orientation": "portrait",
-    "background_color": "#050505",
+    "background_color": "#0a0a0a",
     "theme_color": "#22c55e",
-    "categories": [
-        "business",
-        "productivity"
-    ],
+    "lang": "en",
+    "dir": "ltr",
+    "prefer_related_applications": false,
     "icons": [
         {
             "src": "/icon-192.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "any maskable"
+            "purpose": "any"
+        },
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
         },
         {
             "src": "/icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "any maskable"
+            "purpose": "any"
         },
         {
-            "src": "/favicon.ico",
-            "sizes": "64x64 32x32 24x24 16x16",
-            "type": "image/x-icon"
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ],
+    "screenshots": [],
     "shortcuts": [
         {
-            "name": "Add Product",
-            "short_name": "Add",
+            "name": "Dashboard",
+            "short_name": "Admin",
             "url": "/admin",
-            "description": "Add a new product"
+            "description": "Open Admin Dashboard"
         }
     ]
 }
