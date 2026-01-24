@@ -7,6 +7,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        'premium-black': '#050505',
+        'premium-gray': '#111111',
+        'delta-green': '#22c55e', // Green-500 equivalent
+      },
       fontFamily: {
         sans: ['var(--font-inter)'],
         oswald: ['var(--font-oswald)'],

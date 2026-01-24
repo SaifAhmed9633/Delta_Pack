@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 
 const navLinks = [
   { name: 'HOME', href: '/' },
-  { name: 'MODELS', href: 'models' },
-  { name: 'TECHNOLOGY', href: '#features' }, // ربطناها بقسم المميزات
-  { name: 'CONTACT', href: '#contact' },
+  { name: 'PORTFOLIO', href: '/models' },
+  { name: 'TECHNOLOGY', href: '/#features' },
+  { name: 'CONTACT', href: '/#contact' },
 ];
 
 export default function Navbar() {

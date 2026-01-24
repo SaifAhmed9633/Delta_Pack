@@ -38,8 +38,8 @@ export default function AdminPage() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2000000) {
-        alert("Image is too large! Please choose an image under 2MB.");
+      if (file.size > 5000000) {
+        alert("Image is too large! Please choose an image under 5MB.");
         return;
       }
       const reader = new FileReader();
@@ -157,64 +157,67 @@ export default function AdminPage() {
     <div className="w-full max-w-6xl mx-auto space-y-8">
 
       {/* Header */}
-      <div className="flex justify-between items-center pb-6 border-b border-white/10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-white/10">
         <div>
-          <h2 className="text-3xl font-bold font-oswald text-white">DASHBOARD</h2>
-          <p className="text-gray-400 text-sm mt-1">Manage your product catalog</p>
+          <h2 className="text-3xl md:text-4xl font-bold font-oswald text-white tracking-wide">DASHBOARD</h2>
+          <p className="text-gray-400 text-sm mt-1 font-mono">Manage your product catalog</p>
         </div>
-        <div className="text-right">
-          <p className="text-xs text-gray-500 font-mono">TOTAL PRODUCTS</p>
-          <p className="text-2xl font-bold text-green-500 font-mono">{products.length}</p>
+        <div className="text-right w-full md:w-auto flex justify-between md:block bg-white/5 md:bg-transparent p-3 md:p-0 rounded-lg md:rounded-none border md:border-none border-white/10">
+          <p className="text-[10px] text-gray-500 font-mono tracking-widest uppercase mb-1">Total Products</p>
+          <p className="text-2xl md:text-3xl font-bold text-delta-green font-mono leading-none">{products.length}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
 
         {/* Left Column: Form */}
-        <div className="xl:col-span-5 h-fit sticky top-8">
-          <div className="bg-[#111] p-6 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-sm">
-            <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-white">
-              <span className="w-2 h-2 rounded-full bg-green-500"></span>
+        <div className="xl:col-span-5 h-fit lg:sticky lg:top-8 order-1">
+          <div className="glass-card p-6 rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden group/form">
+            {/* Ambient Background Glow */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-green-500/20 blur-[100px] rounded-full group-hover/form:bg-green-500/30 transition-all duration-700"></div>
+
+            <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-white relative z-10">
+              <span className="w-2 h-2 rounded-full bg-delta-green shadow-[0_0_10px_#22c55e]"></span>
               {editingId ? 'EDIT PRODUCT' : 'ADD NEW PRODUCT'}
             </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
               <div className="grid grid-cols-2 gap-4">
                 <div className="group">
-                  <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-green-500 transition-colors">Client</label>
-                  <input type="text" name="client" value={formData.client} onChange={handleChange} required className="w-full bg-black/50 border border-white/10 p-3 rounded-lg text-sm outline-none text-white focus:border-green-500 transition-all placeholder:text-gray-700" placeholder="e.g. Starbucks" />
+                  <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-delta-green transition-colors">Client</label>
+                  <input type="text" name="client" value={formData.client} onChange={handleChange} required className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none text-white focus:border-delta-green focus:bg-black/60 transition-all placeholder:text-gray-700" placeholder="e.g. Starbucks" />
                 </div>
                 <div className="group">
-                  <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-green-500 transition-colors">Type</label>
-                  <input type="text" name="type" value={formData.type} onChange={handleChange} required className="w-full bg-black/50 border border-white/10 p-3 rounded-lg text-sm outline-none text-white focus:border-green-500 transition-all placeholder:text-gray-700" placeholder="e.g. Hot Cup" />
+                  <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-delta-green transition-colors">Type</label>
+                  <input type="text" name="type" value={formData.type} onChange={handleChange} required className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none text-white focus:border-delta-green focus:bg-black/60 transition-all placeholder:text-gray-700" placeholder="e.g. Hot Cup" />
                 </div>
               </div>
 
               <div className="group">
-                <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-green-500 transition-colors">Title</label>
-                <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full bg-black/50 border border-white/10 p-3 rounded-lg text-sm outline-none text-white focus:border-green-500 transition-all placeholder:text-gray-700" placeholder="e.g. Double Wall 12oz" />
+                <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-delta-green transition-colors">Title</label>
+                <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none text-white focus:border-delta-green focus:bg-black/60 transition-all placeholder:text-gray-700" placeholder="e.g. Double Wall 12oz" />
               </div>
 
               <div className="group">
-                <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-green-500 transition-colors">Description</label>
-                <textarea name="desc" value={formData.desc} onChange={handleChange} rows="3" required className="w-full bg-black/50 border border-white/10 p-3 rounded-lg text-sm outline-none text-white focus:border-green-500 transition-all placeholder:text-gray-700" placeholder="Product details..." />
+                <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-delta-green transition-colors">Description</label>
+                <textarea name="desc" value={formData.desc} onChange={handleChange} rows="3" required className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none text-white focus:border-delta-green focus:bg-black/60 transition-all placeholder:text-gray-700" placeholder="Product details..." />
               </div>
 
               {/* Image Upload */}
-              <div className={`border-2 border-dashed p-6 rounded-xl text-center transition-all ${formData.img ? 'border-green-500/50 bg-green-500/5' : 'border-white/10 hover:border-white/30 hover:bg-white/5'}`}>
+              <div className={`border-2 border-dashed p-6 rounded-xl text-center transition-all duration-300 ${formData.img ? 'border-delta-green/50 bg-delta-green/5' : 'border-white/10 hover:border-white/30 hover:bg-white/5'}`}>
                 <label className="block cursor-pointer">
                   <input id="fileInput" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                   {formData.img ? (
                     <div className="relative group">
                       <img src={formData.img} alt="Preview" className="h-32 mx-auto rounded-lg shadow-lg object-contain" />
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
-                        <span className="text-xs font-bold text-white">CHANGE IMAGE</span>
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg backdrop-blur-sm">
+                        <span className="text-xs font-bold text-white tracking-widest">CHANGE IMAGE</span>
                       </div>
                     </div>
                   ) : (
                     <div className="py-4">
-                      <div className="text-2xl mb-2">📷</div>
-                      <span className="text-xs font-bold text-gray-400">CLICK TO UPLOAD</span>
+                      <div className="text-2xl mb-2 opacity-50">📷</div>
+                      <span className="text-xs font-bold text-gray-400 tracking-widest">CLICK TO UPLOAD</span>
                       <p className="text-[10px] text-gray-600 mt-1">JPG, PNG (Max 2MB)</p>
                     </div>
                   )}
@@ -225,7 +228,7 @@ export default function AdminPage() {
               <div className="grid grid-cols-3 gap-3">
                 {['height', 'top', 'bottom'].map((spec) => (
                   <div key={spec} className="group">
-                    <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-green-500 transition-colors">{spec}</label>
+                    <label className="block text-[10px] uppercase tracking-wider text-gray-500 mb-1 group-focus-within:text-delta-green transition-colors">{spec}</label>
                     <input
                       type="number"
                       step="0.1"
@@ -233,7 +236,7 @@ export default function AdminPage() {
                       value={formData.specs[spec]}
                       onChange={handleChange}
                       required
-                      className="w-full bg-black/50 border border-white/10 p-2 rounded-lg text-center text-sm outline-none text-white focus:border-green-500 transition-all"
+                      className="w-full bg-black/40 border border-white/10 p-2 rounded-lg text-center text-sm outline-none text-white focus:border-delta-green focus:bg-black/60 transition-all"
                     />
                   </div>
                 ))}
@@ -246,7 +249,7 @@ export default function AdminPage() {
                     Cancel
                   </button>
                 )}
-                <button type="submit" disabled={loading} className="flex-1 py-3 bg-green-600 font-bold rounded-lg hover:bg-green-500 uppercase transition-all text-xs tracking-wider shadow-[0_0_20px_rgba(22,163,74,0.3)]">
+                <button type="submit" disabled={loading} className="flex-1 py-3 bg-green-600 font-bold rounded-lg hover:bg-green-500 uppercase transition-all text-xs tracking-wider shadow-[0_0_20px_rgba(22,163,74,0.3)] hover:shadow-[0_0_30px_rgba(22,163,74,0.5)] active:scale-[0.98]">
                   {loading ? 'PROCESSING...' : (editingId ? 'SAVE CHANGES' : 'CREATE PRODUCT')}
                 </button>
               </div>
@@ -269,30 +272,32 @@ export default function AdminPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {products.map((product) => (
-              <div key={product._id} className="group bg-[#111] p-4 rounded-xl border border-white/5 hover:border-green-500/30 transition-all hover:bg-[#161616] flex gap-4 relative overflow-hidden">
+              <div key={product._id} className="glass-card group p-4 rounded-xl hover:border-delta-green/30 transition-all duration-300 hover:transform hover:-translate-y-1 flex gap-4 relative overflow-hidden">
                 {/* Image */}
-                <div className="w-20 h-20 bg-black rounded-lg flex-shrink-0 border border-white/5 overflow-hidden">
-                  <img src={product.img} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-20 h-20 bg-black/50 rounded-lg flex-shrink-0 border border-white/5 overflow-hidden backdrop-blur-sm">
+                  <img src={product.img} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 z-10">
                   <div className="flex justify-between items-start">
-                    <h4 className="font-bold text-sm text-white truncate">{product.client}</h4>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/5">{product.type}</span>
+                    <h4 className="font-bold text-sm text-white truncate font-oswald tracking-wide">{product.client}</h4>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-300 border border-white/5 font-mono group-hover:border-delta-green/30 transition-colors">{product.type}</span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1 truncate">{product.title}</p>
-                  <p className="text-[10px] text-gray-600 mt-2 font-mono">
-                    H:{product.specs?.height} T:{product.specs?.top} B:{product.specs?.bottom}
+                  <p className="text-xs text-gray-400 mt-1 truncate group-hover:text-gray-200 transition-colors">{product.title}</p>
+                  <p className="text-[10px] text-gray-500 mt-2 font-mono flex gap-2">
+                    <span className="bg-white/5 px-1 rounded">H: {product.specs?.height}</span>
+                    <span className="bg-white/5 px-1 rounded">T: {product.specs?.top}</span>
+                    <span className="bg-white/5 px-1 rounded">B: {product.specs?.bottom}</span>
                   </p>
                 </div>
 
                 {/* Actions (Hover) */}
-                <div className="absolute right-2 bottom-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
-                  <button onClick={() => handleEdit(product)} className="w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-colors border border-blue-500/20" title="Edit">
+                <div className="absolute right-2 bottom-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300 z-20">
+                  <button onClick={() => handleEdit(product)} className="w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all border border-blue-500/20 backdrop-blur-md" title="Edit">
                     ✏️
                   </button>
-                  <button onClick={() => handleDelete(product._id)} className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors border border-red-500/20" title="Delete">
+                  <button onClick={() => handleDelete(product._id)} className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all border border-red-500/20 backdrop-blur-md" title="Delete">
                     🗑️
                   </button>
                 </div>

@@ -3,30 +3,30 @@ import { motion } from 'framer-motion';
 
 export default function ContactSection() {
   return (
-    <section id="contact" className="relative bg-[#050505] py-24 px-6 md:px-20 border-t border-white/10 overflow-hidden">
+    <section id="contact" className="relative bg-[#050505] py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-20 border-t border-white/10 overflow-hidden">
       
-      {/* خلفية جمالية (خريطة العالم منقطة مثلاً أو تدرج) */}
+      {/* Background Glow */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-green-900/5 blur-[150px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 relative z-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 relative z-10">
         
-        {/* اليسار: معلومات التواصل */}
+        {/* Left: Contact Info */}
         <div>
           <span className="text-green-500 font-mono text-xs tracking-widest mb-4 block">READY TO SCALE?</span>
-          <h2 className="text-4xl md:text-6xl font-oswald font-bold text-white mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-oswald font-bold text-white mb-4 md:mb-6">
             GET A <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">QUOTE</span>
           </h2>
-          <p className="text-gray-400 leading-relaxed mb-10 max-w-md">
+          <p className="text-gray-400 leading-relaxed mb-8 md:mb-10 max-w-md text-sm md:text-base">
             فريق المبيعات جاهز للرد على استفسارك خلال 24 ساعة. 
             نقدم أسعاراً تنافسية للكميات الكبيرة وعقود التوريد السنوية.
           </p>
 
-          <div className="space-y-8 font-mono text-sm">
-            <div className="flex items-start gap-4">
-              <span className="text-green-500 text-xl">●</span>
+          <div className="space-y-6 md:space-y-8 font-mono text-sm">
+            <div className="flex items-start gap-3 md:gap-4">
+              <span className="text-green-500 text-lg md:text-xl">●</span>
               <div>
-                <p className="text-gray-500 text-xs mb-1">SALES HOTLINE</p>
-                <p className="text-white text-lg tracking-wider hover:text-green-400 transition-colors cursor-pointer">
+                <p className="text-gray-500 text-[10px] md:text-xs mb-1">SALES HOTLINE</p>
+                <p className="text-white text-base md:text-lg tracking-wider hover:text-green-400 transition-colors cursor-pointer">
                   +20 100 000 0000
                 </p>
               </div>

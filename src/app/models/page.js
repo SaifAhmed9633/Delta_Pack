@@ -3,122 +3,158 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// استدعاء الكوب 3D
-const CupShowcase = dynamic(() => import('@/components/CupShowcase'), { 
-  ssr: false, 
+// 3D Cup - Only loads in modal
+const CupShowcase = dynamic(() => import('@/components/CupShowcase'), {
+  ssr: false,
   loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#050505]">
-      <div className="text-green-500 font-mono text-xs tracking-[0.5em] animate-pulse">INITIALIZING STUDIO...</div>
+    <div className="absolute inset-0 flex items-center justify-center bg-black">
+      <div className="w-8 h-8 border-2 border-green-500/50 border-t-green-500 rounded-full animate-spin"></div>
     </div>
   )
 });
 
-export default function PortfolioPage() {
+export default function ModelsPage() {
   const [selectedProject, setSelectedProject] = useState(null);
-  const [products, setProducts] = useState([]); // هنا هنخزن منتجات الداتابيز
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
 
-  // جلب البيانات من الداتابيز أول ما الصفحة تفتح
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
-        if (data.success) {
-          setProducts(data.data);
-        }
+        if (data.success) setProducts(data.data);
       } catch (error) {
-        console.error("Failed to fetch products:", error);
+        console.error("Failed to fetch:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
-  return (
-    <section className="min-h-screen bg-[#050505] text-white selection:bg-green-500 selection:text-black relative overflow-hidden">
-      
-      {/* الخلفية */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 opacity-[0.03]" 
-             style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}>
-        </div>
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-green-900/10 to-transparent"></div>
-      </div>
+  const types = ['all', ...new Set(products.map(p => p.type))];
+  const filteredProducts = filter === 'all' ? products : products.filter(p => p.type === filter);
 
-      <div className="relative z-10 px-6 py-24 md:px-16 max-w-[1600px] mx-auto">
-        
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-20 border-b border-white/10 pb-10">
-          <div>
-            <motion.span 
-              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-              className="text-green-500 font-mono text-xs tracking-[0.4em] mb-4 block"
-            >
-              / SELECTED WORKS
-            </motion.span>
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-              className="text-5xl md:text-8xl font-oswald font-bold uppercase leading-[0.9]"
-            >
-              Client <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600">Success</span>
-            </motion.h1>
-          </div>
-          
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-            className="flex gap-8 text-right hidden md:flex"
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+
+      {/* Hero Header - Like Home Page */}
+      <section className="relative border-b border-white/5 overflow-hidden">
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#111] to-transparent pointer-events-none" />
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-green-900/10 to-transparent pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-32 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-             <div>
-               <h3 className="text-2xl font-oswald font-bold">{products.length}</h3>
-               <p className="text-gray-500 text-xs font-mono tracking-widest">ACTIVE PROJECTS</p>
-             </div>
+            {/* Status Badge - Like Home */}
+            <div className="inline-flex items-center gap-2 mb-6 border border-green-900/50 bg-green-900/10 px-3 py-1 rounded-full backdrop-blur-sm">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></span>
+              <span className="text-[10px] font-mono text-green-400 tracking-widest">PORTFOLIO</span>
+            </div>
+
+            <h1 className="font-oswald text-5xl md:text-8xl font-bold leading-[0.9] tracking-tight mb-6">
+              OUR <br />
+              <span className="stroke-text opacity-40" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)', color: 'transparent' }}>
+                PROJECTS
+              </span>
+            </h1>
+
+            <p className="text-gray-400 max-w-lg text-sm leading-relaxed border-l-2 border-green-500/50 pl-4">
+              Explore our collection of custom paper cup designs. Each piece crafted with precision for our valued clients.
+            </p>
           </motion.div>
         </div>
+      </section>
 
-        {/* Loading State */}
-        {loading ? (
-           <div className="w-full h-64 flex items-center justify-center text-green-500 font-mono text-xs tracking-widest animate-pulse">
-             CONNECTING TO DATABASE...
-           </div>
-        ) : (
-          /* Grid Section - Products from DB */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((item, index) => (
-              <motion.div 
-                key={item._id}
-                layoutId={`card-${item._id}`}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => setSelectedProject(item)}
-                className="group cursor-pointer relative"
+      {/* Filter Bar */}
+      <div className="sticky top-0 z-30 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {types.map(type => (
+              <button
+                key={type}
+                onClick={() => setFilter(type)}
+                className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-wider whitespace-nowrap transition-all ${filter === type
+                    ? 'bg-green-500 text-black font-bold'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
+                  }`}
               >
-                <div className="relative h-[400px] bg-[#0a0a0a] rounded-xl overflow-hidden border border-white/5 transition-all duration-500 group-hover:border-green-500/30 group-hover:shadow-[0_0_30px_rgba(34,197,94,0.1)]">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 z-10" />
-                  
-                  {/* Background Image */}
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-80"
-                    style={{ backgroundImage: `url(${item.img || '/design.jpg'})` }}
+                {type === 'all' ? 'ALL' : type}
+              </button>
+            ))}
+          </div>
+          <div className="text-xs font-mono text-gray-500">
+            {filteredProducts.length} ITEMS
+          </div>
+        </div>
+      </div>
+
+      {/* Gallery Grid */}
+      <main className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-2 border-green-500/30 border-t-green-500 rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProducts.map((item, index) => (
+              <motion.div
+                key={item._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.4 }}
+                onClick={() => setSelectedProject(item)}
+                className="group cursor-pointer"
+              >
+                {/* Card */}
+                <div className="relative aspect-[4/5] bg-[#111] rounded-xl overflow-hidden border border-white/5 hover:border-green-500/30 transition-all duration-300">
+                  {/* Image */}
+                  <img
+                    src={item.img || '/design.jpg'}
+                    alt={item.client}
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                    loading="lazy"
                   />
 
-                  <div className="absolute bottom-0 left-0 w-full p-8 z-20">
-                     <div className="flex justify-between items-end border-b border-white/10 pb-4 mb-4">
-                        <div>
-                          <p className="text-green-500 font-mono text-[10px] tracking-widest mb-1">{item.type}</p>
-                          <h3 className="text-3xl font-oswald font-bold uppercase">{item.client}</h3>
-                        </div>
-                        <span className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-green-500 group-hover:text-black group-hover:border-green-500 transition-all">
-                          ↗
-                        </span>
-                     </div>
-                     <p className="text-gray-400 text-sm line-clamp-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                       {item.desc}
-                     </p>
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+
+                  {/* Type Badge */}
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1 bg-black/60 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-mono text-green-400 tracking-wider">
+                      {item.type}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="absolute inset-x-0 bottom-0 p-5">
+                    <h3 className="text-white font-oswald text-2xl font-bold uppercase mb-1 group-hover:text-green-400 transition-colors">
+                      {item.client}
+                    </h3>
+                    <p className="text-gray-400 text-sm line-clamp-2 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {item.desc}
+                    </p>
+
+                    {/* Specs Row */}
+                    <div className="flex items-center gap-4 text-[10px] font-mono text-gray-500">
+                      <span>{item.specs?.height * 10}mm</span>
+                      <span>•</span>
+                      <span>⌀{item.specs?.top * 20}mm</span>
+                    </div>
+                  </div>
+
+                  {/* View Icon */}
+                  <div className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 border border-white/20">
+                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
                   </div>
                 </div>
               </motion.div>
@@ -126,64 +162,104 @@ export default function PortfolioPage() {
           </div>
         )}
 
-      </div>
+        {!loading && filteredProducts.length === 0 && (
+          <div className="text-center py-20">
+            <p className="text-gray-500 font-mono text-sm">NO PROJECTS FOUND</p>
+          </div>
+        )}
+      </main>
 
-      {/* Modal / Overlay */}
+      {/* Modal */}
       <AnimatePresence>
         {selectedProject && (
-          <>
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 overflow-auto"
+          >
+            {/* Close Button */}
+            <button
               onClick={() => setSelectedProject(null)}
-              className="fixed inset-0 bg-black/90 backdrop-blur-md z-40 cursor-pointer"
-            />
-
-            <motion.div 
-              layoutId={`card-${selectedProject._id}`}
-              className="fixed inset-4 md:inset-10 bg-[#080808] border border-white/10 z-50 rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
+              className="fixed top-6 right-6 z-50 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors border border-white/10"
             >
-              <button 
-                onClick={() => setSelectedProject(null)}
-                className="absolute top-6 right-6 z-50 w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
-              >
-                ✕
-              </button>
+              ✕
+            </button>
 
-              {/* 3D Scene */}
-              <div className="w-full md:w-2/3 h-[50vh] md:h-full relative bg-gradient-to-b from-[#111] to-[#050505]">
-                 <div className="absolute top-8 left-8 z-10 pointer-events-none">
-                    <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></span>
-                    <span className="text-green-500 font-mono text-[10px] tracking-widest">LIVE RENDER</span>
-                 </div>
-                 <div className="w-full h-full cursor-grab active:cursor-grabbing">
-                    <CupShowcase config={selectedProject.specs} texturePath={selectedProject.img} />
-                 </div>
+            <div className="min-h-screen flex flex-col lg:flex-row">
+              {/* 3D Viewer */}
+              <div className="flex-1 h-[50vh] lg:h-screen lg:sticky lg:top-0 relative bg-[#050505]">
+                <CupShowcase config={selectedProject.specs} texturePath={selectedProject.img} />
+                <div className="absolute bottom-6 left-6 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  <span className="text-green-400/70 text-xs font-mono">LIVE 3D • Drag to rotate</span>
+                </div>
               </div>
 
               {/* Details */}
-              <div className="w-full md:w-1/3 h-auto md:h-full bg-[#0c0c0c] border-l border-white/5 p-8 md:p-12 flex flex-col overflow-y-auto">
-                 <motion.div 
-                   initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
-                 >
-                    <h2 className="text-5xl font-oswald font-bold mb-2 uppercase">{selectedProject.client}</h2>
-                    <p className="text-gray-300 text-sm leading-relaxed mb-10">
-                      {selectedProject.desc}
-                    </p>
+              <div className="w-full lg:w-[480px] bg-[#0a0a0a] border-l border-white/5 p-8 lg:p-12">
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  {/* Badge */}
+                  <div className="inline-flex items-center gap-2 mb-4 border border-green-900/50 bg-green-900/10 px-3 py-1 rounded-full">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                    <span className="text-[10px] font-mono text-green-400 tracking-widest">{selectedProject.type}</span>
+                  </div>
 
-                    <div className="bg-[#111] rounded-lg p-6 border border-white/5 relative overflow-hidden">
-                       <h4 className="text-white font-mono text-xs mb-4">TECHNICAL SPECIFICATIONS</h4>
-                       <div className="space-y-4 font-mono text-xs">
-                         <div className="flex justify-between"><span className="text-gray-500">HEIGHT</span><span className="text-white">{selectedProject.specs.height * 10} mm</span></div>
-                         <div className="flex justify-between"><span className="text-gray-500">TOP DIA</span><span className="text-white">{selectedProject.specs.top * 20} mm</span></div>
-                         <div className="flex justify-between"><span className="text-gray-500">BOTTOM DIA</span><span className="text-white">{selectedProject.specs.bottom * 20} mm</span></div>
-                       </div>
+                  <h2 className="font-oswald text-4xl lg:text-5xl font-bold uppercase mb-6">
+                    {selectedProject.client}
+                  </h2>
+
+                  <p className="text-gray-400 leading-relaxed mb-10 border-l-2 border-green-500/50 pl-4">
+                    {selectedProject.desc}
+                  </p>
+
+                  {/* Specs Card */}
+                  <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-6 mb-8">
+                    <div className="flex justify-between items-center text-[10px] font-mono text-green-500 mb-4 tracking-widest">
+                      <span>● LIVE SPECS</span>
+                      <span className="border border-green-500/30 px-2 py-0.5 rounded">CUSTOM</span>
                     </div>
-                 </motion.div>
+
+                    <div className="space-y-3 border-t border-white/10 pt-4">
+                      {[
+                        { label: 'HEIGHT', value: `${selectedProject.specs?.height * 10} MM` },
+                        { label: 'TOP DIA', value: `${selectedProject.specs?.top * 20} MM` },
+                        { label: 'BOT DIA', value: `${selectedProject.specs?.bottom * 20} MM` }
+                      ].map(spec => (
+                        <div key={spec.label} className="flex justify-between items-center text-xs font-mono">
+                          <span className="text-gray-500">{spec.label}</span>
+                          <span className="text-white font-bold">{spec.value}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="w-full h-0.5 bg-gray-800 mt-4 overflow-hidden rounded-full">
+                      <div className="w-2/3 h-full bg-green-500/50 animate-pulse"></div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3">
+                    <button className="flex-1 bg-white text-black px-6 py-4 font-oswald font-bold text-sm tracking-wider hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                      REQUEST QUOTE
+                    </button>
+                    <button className="px-4 py-4 border border-white/20 hover:bg-white hover:text-black transition-all">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                    </button>
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
-    </section>
+    </div>
   );
 }

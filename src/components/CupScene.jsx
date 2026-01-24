@@ -5,22 +5,20 @@ import {
   ContactShadows, 
   Environment, 
   PerspectiveCamera, 
-  Float 
+  Float,
+  Preload
 } from '@react-three/drei';
-import { useRef, useEffect, Suspense } from 'react';
+import { useRef, useEffect, Suspense, memo } from 'react';
 import * as THREE from 'three';
 
-function CupModel() {
+// Memoized Cup Model to prevent unnecessary re-renders
+const CupModel = memo(function CupModel() {
   const meshRef = useRef();
   const texture = useTexture('/design.jpg');
-  
-  // نستخدم useThree للوصول لإمكانيات كارت الشاشة
   const { gl } = useThree();
 
   useEffect(() => {
-    // 1. تحسين جودة الصورة (Anisotropy) لتكون حادة من الزوايا
-    texture.anisotropy = gl.capabilities.getMaxAnisotropy();
-    
+    texture.anisotropy = Math.min(gl.capabilities.getMaxAnisotropy(), 8); // Cap anisotropy
     texture.flipY = true;
     texture.wrapS = THREE.RepeatWrapping; 
     texture.wrapT = THREE.RepeatWrapping;
@@ -32,52 +30,46 @@ function CupModel() {
 
   useFrame((state) => {
     if (!meshRef.current) return;
-    meshRef.current.rotation.y += 0.005;
+    meshRef.current.rotation.y += 0.004; // Slightly slower rotation
     meshRef.current.rotation.x = THREE.MathUtils.lerp(
       meshRef.current.rotation.x, 
-      state.mouse.y * -0.1, 
-      0.1
+      state.mouse.y * -0.08, // Reduced mouse sensitivity
+      0.08
     );
   });
 
-  // الأبعاد (ثابتة كما طلبت)
   const height = 13;
   const topRadius = 4.45;
   const bottomRadius = 2.9;
 
   return (
     <group ref={meshRef} dispose={null}>
-      {/* 1. جسم الكوب */}
-      <mesh castShadow receiveShadow frustumCulled={false}>
-        {/* زيادة التنعيم: 128 بدلاً من 64 */}
-        <cylinderGeometry args={[topRadius, bottomRadius, height, 128, 1, true]} />
-        
-        {/* استخدام PhysicalMaterial لواقعية أكثر */}
+      {/* Cup Body - Reduced segments for performance */}
+      <mesh castShadow>
+        <cylinderGeometry args={[topRadius, bottomRadius, height, 64, 1, true]} />
         <meshPhysicalMaterial 
           map={texture} 
           side={THREE.DoubleSide} 
-          roughness={0.2}       // نعومة الورق المصقول
-          metalness={0.1} 
-          clearcoat={0.1}       // طبقة ورنيش خفيفة جداً
-          clearcoatRoughness={0.1}
-          reflectivity={0.5}
+          roughness={0.25}
+          metalness={0.05}
+          clearcoat={0.08}
         />
       </mesh>
 
-      {/* 2. الحافة العلوية (Rim) */}
-      <mesh position={[0, height / 2, 0]} rotation={[Math.PI / 2, 0, 0]} frustumCulled={false}>
-        <torusGeometry args={[topRadius, 0.2, 32, 128]} />
-        <meshStandardMaterial color="#f5f5f5" roughness={0.1} />
+      {/* Top Rim - Reduced segments */}
+      <mesh position={[0, height / 2, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[topRadius, 0.2, 16, 64]} />
+        <meshStandardMaterial color="#f5f5f5" roughness={0.15} />
       </mesh>
 
-      {/* 3. القاعدة */}
-      <mesh position={[0, -height / 2 + 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]} frustumCulled={false}>
-        <circleGeometry args={[bottomRadius, 64]} />
+      {/* Base - Reduced segments */}
+      <mesh position={[0, -height / 2 + 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[bottomRadius, 32]} />
         <meshStandardMaterial color="white" />
       </mesh>
     </group>
   );
-}
+});
 
 function Loader() {
   return (
@@ -92,48 +84,46 @@ export default function CupScene() {
   return (
     <div className="w-full h-full min-h-[500px]">
       <Canvas 
-        shadows 
-        // ⚠️ هام: التغيير لـ [1, 2] يعطي دقة عالية جداً
-        // لو الجهاز هنج (Crash) رجعها لـ 1 تاني
-        dpr={[1, 2]} 
+        shadows
+        dpr={[1, 1.5]} // Reduced max DPR for performance
         gl={{ 
           antialias: true, 
           alpha: true, 
           powerPreference: "high-performance",
-          preserveDrawingBuffer: true,
-          toneMapping: THREE.ACESFilmicToneMapping, // تحسين الألوان والإضاءة
-          toneMappingExposure: 1.2
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.1
         }}
+        performance={{ min: 0.5 }} // Allow frame rate adjustment
       >
-        <PerspectiveCamera makeDefault position={[0, 2, 40]} fov={35} near={0.1} far={1000} />
+        <PerspectiveCamera makeDefault position={[0, 2, 40]} fov={35} />
         
-        {/* إضاءة بيئة الاستوديو */}
-        <Environment preset="studio" blur={0.5} />
-        
+        {/* Simplified lighting */}
+        <Environment preset="studio" />
         <spotLight 
           position={[20, 20, 10]} 
           angle={0.15} 
           penumbra={1} 
-          intensity={2} // زيادة الإضاءة قليلاً
-          castShadow 
-          shadow-bias={-0.0001}
+          intensity={1.8}
+          castShadow
+          shadow-mapSize={[512, 512]}
         />
-        <ambientLight intensity={0.8} />
+        <ambientLight intensity={0.7} />
 
         <Suspense fallback={<Loader />}>
-          <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5} floatingRange={[-0.3, 0.3]}>
-             <CupModel />
+          <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.4} floatingRange={[-0.2, 0.2]}>
+            <CupModel />
           </Float>
+          <Preload all />
         </Suspense>
 
-        {/* تحسين دقة الظل */}
+        {/* Optimized shadows */}
         <ContactShadows 
           position={[0, -6, 0]} 
-          opacity={0.5} 
-          scale={40} 
-          blur={2.5} 
+          opacity={0.4} 
+          scale={35} 
+          blur={2} 
           far={4} 
-          resolution={512} // رفعنا الدقة من 256
+          resolution={256}
           color="#000000"
         />
       </Canvas>
