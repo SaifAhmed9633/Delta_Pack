@@ -11,8 +11,14 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-start-rgb));
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background: #22c55e30; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #22c55e60; }
 
 /* Glassmorphism Utilities */
 .glass {
@@ -33,3 +39,10 @@ body {
   -webkit-text-stroke: 1px rgba(255,255,255,0.5);
   color: transparent;
 }
+
+/* Hide scrollbar utility */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* Smooth anchor scroll offset */
+[id] { scroll-margin-top: 80px; }

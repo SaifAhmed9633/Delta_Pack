@@ -10,7 +10,7 @@ module.exports = {
       colors: {
         'premium-black': '#050505',
         'premium-gray': '#111111',
-        'delta-green': '#22c55e', // Green-500 equivalent
+        'delta-green': '#22c55e',
       },
       fontFamily: {
         sans: ['var(--font-inter)'],
@@ -18,12 +18,12 @@ module.exports = {
         mono: ['monospace'],
       },
       animation: {
-        marquee: 'marquee 25s linear infinite',
+        marquee: 'marquee 35s linear infinite',
       },
       keyframes: {
         marquee: {
           '0%': { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
     },
