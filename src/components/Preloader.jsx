@@ -4,71 +4,136 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Preloader() {
   const [progress, setProgress] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [phase, setPhase] = useState('loading'); // 'loading' | 'done' | 'exit'
 
   useEffect(() => {
-    // محاكاة عملية التحميل (Simulate Loading)
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        // زيادة عشوائية لتبدو طبيعية
-        const next = prev + Math.floor(Math.random() * 5) + 1;
-        
-        if (next >= 100) {
-          clearInterval(timer);
-          setTimeout(() => setIsLoading(false), 800); // انتظر قليلاً بعد الاكتمال
-          return 100;
-        }
-        return next;
-      });
-    }, 40); // سرعة التعبئة
+    // Fast early burst, then slows down, then snaps to 100
+    const steps = [
+      { target: 30, duration: 300 },
+      { target: 65, duration: 500 },
+      { target: 85, duration: 400 },
+      { target: 97, duration: 600 },
+      { target: 100, duration: 200 },
+    ];
 
-    return () => clearInterval(timer);
+    let current = 0;
+    let raf;
+
+    const runStep = (stepIdx) => {
+      if (stepIdx >= steps.length) {
+        setPhase('done');
+        setTimeout(() => setPhase('exit'), 600);
+        return;
+      }
+      const { target, duration } = steps[stepIdx];
+      const start = performance.now();
+
+      const tick = (now) => {
+        const t = Math.min(1, (now - start) / duration);
+        const ease = 1 - Math.pow(1 - t, 3);
+        setProgress(Math.round(current + (target - current) * ease));
+        if (t < 1) {
+          raf = requestAnimationFrame(tick);
+        } else {
+          current = target;
+          runStep(stepIdx + 1);
+        }
+      };
+      raf = requestAnimationFrame(tick);
+    };
+
+    runStep(0);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   return (
     <AnimatePresence>
-      {isLoading && (
+      {phase !== 'exit' && (
         <motion.div
-          initial={{ y: 0 }}
-          exit={{ y: '-100%', transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] text-white overflow-hidden"
+          initial={{ opacity: 1 }}
+          exit={{
+            clipPath: 'inset(0 0 100% 0)',
+            transition: { duration: 0.9, ease: [0.76, 0, 0.24, 1] },
+          }}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] overflow-hidden select-none"
         >
-          {/* حاوية اللوجو والأنيميشن */}
-          <div className="relative">
-            
-            {/* 1. النص "الفارغ" (Outline) - يظهر دائماً */}
-            <h1 className="font-oswald text-6xl md:text-9xl font-bold text-transparent stroke-text opacity-30 select-none"
-                style={{ WebkitTextStroke: '1px #555' }}>
+          {/* Ambient ring */}
+          <motion.div
+            animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.6, 0.3] }}
+            transition={{ repeat: Infinity, duration: 2.4, ease: 'easeInOut' }}
+            className="absolute w-[500px] h-[500px] rounded-full border border-green-500/10 pointer-events-none"
+          />
+          <motion.div
+            animate={{ scale: [1.1, 1.06, 1.1], opacity: [0.15, 0.3, 0.15] }}
+            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut', delay: 0.4 }}
+            className="absolute w-[700px] h-[700px] rounded-full border border-green-500/05 pointer-events-none"
+          />
+
+          {/* Glow */}
+          <div className="absolute w-64 h-64 rounded-full bg-green-500/8 blur-[100px] pointer-events-none" />
+
+          {/* Main wordmark — fill reveal */}
+          <div className="relative mb-10">
+            {/* Outline */}
+            <h1
+              className="font-oswald text-[clamp(3rem,12vw,9rem)] font-bold select-none"
+              style={{
+                color: 'transparent',
+                WebkitTextStroke: '1px rgba(255,255,255,0.12)',
+              }}
+            >
               DELTA PACK
             </h1>
 
-            {/* 2. النص "المملوء" (Filled) - يظهر فوق الفارغ ويتم قصه */}
-            <div 
-              className="absolute bottom-0 left-0 w-full overflow-hidden transition-all duration-100 ease-linear"
-              style={{ height: `${progress}%` }} // الارتفاع يتغير حسب النسبة
+            {/* Filled clip — grows from bottom to top */}
+            <div
+              className="absolute inset-0 overflow-hidden"
+              style={{
+                clipPath: `inset(${100 - progress}% 0 0 0)`,
+                transition: 'clip-path 0.08s linear',
+              }}
             >
-              <h1 className="font-oswald text-6xl md:text-9xl font-bold text-white select-none absolute bottom-0 left-0 w-full">
+              <h1
+                className="font-oswald text-[clamp(3rem,12vw,9rem)] font-bold select-none text-white"
+              >
                 DELTA PACK
               </h1>
             </div>
-
           </div>
 
-          {/* 3. عداد النسبة المئوية */}
-          <div className="mt-8 font-mono text-sm md:text-base tracking-widest text-gray-400 flex items-center gap-3">
-            <span className="w-12 text-right">{progress}%</span>
-            
-            {/* خط تحميل صغير بجانب الرقم */}
-            <div className="w-32 h-px bg-gray-800 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-green-500 transition-all duration-100 ease-linear"
-                  style={{ width: `${progress}%` }}
-                />
+          {/* Counter + bar */}
+          <div className="flex flex-col items-center gap-3 w-56">
+            <div className="flex items-center justify-between w-full text-[10px] font-mono tracking-[0.25em]">
+              <span className="text-gray-600">INITIALIZING</span>
+              <span
+                className="tabular-nums transition-colors"
+                style={{ color: progress === 100 ? '#22c55e' : '#9ca3af' }}
+              >
+                {progress}%
+              </span>
             </div>
-            
-            <span className="text-[10px] text-green-500 animate-pulse">SYSTEM LOADING</span>
-          </div>
 
+            {/* Progress bar */}
+            <div className="w-full h-px bg-white/10 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full rounded-full"
+                style={{
+                  width: `${progress}%`,
+                  background: 'linear-gradient(to right, #22c55e, #38bdf8)',
+                  boxShadow: '0 0 12px #22c55e88',
+                  transition: 'width 0.08s linear',
+                }}
+              />
+            </div>
+
+            {/* Status text */}
+            <div
+              className="text-[9px] font-mono tracking-[0.3em] transition-colors"
+              style={{ color: progress === 100 ? '#22c55e' : '#374151' }}
+            >
+              {progress < 40 ? 'LOADING ASSETS…' : progress < 80 ? 'BUILDING SCENE…' : progress < 100 ? 'FINALIZING…' : '● READY'}
+            </div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

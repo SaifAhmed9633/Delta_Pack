@@ -4,6 +4,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CursorSpotlight from "@/components/CursorSpotlight";
 import Preloader from "@/components/Preloader";
+import CartDrawer from "@/components/CartDrawer";
+import { CartProvider } from "@/lib/cartStore";
+import { CupProvider } from "@/lib/cupContext";
 
 const oswald = Oswald({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-oswald' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -30,11 +33,16 @@ export default function RootLayout({ children }) {
         <div className="fixed inset-0 z-0 opacity-20 pointer-events-none"
           style={{ backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`, backgroundSize: '50px 50px' }} />
 
-        <div className="relative z-20 flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </div>
+        <CartProvider>
+          <CupProvider>
+            <div className="relative z-20 flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </div>
+            <CartDrawer />
+          </CupProvider>
+        </CartProvider>
       </body>
     </html>
   );
